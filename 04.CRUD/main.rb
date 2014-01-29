@@ -6,35 +6,45 @@ db = SQLite3::Database.new(db_path)
 
 # creates the schema of the database
 # your code here
-sql = %q{
-  
-}
-db.execute(sql)
+	sql = "CREATE TABLE IF NOT EXISTS Recipes (Id integer PRIMARY KEY AUTOINCREMENT,Name varchar(255) NOT NULL,Description varchar(255),length integer,Difficulty integer)"
+begin
+	db.execute(sql)
+	p "Welcome!"
+rescue
+	puts "You again, Welcome back"
+end
 
 #*************************************
 
 # function to create a recipe
 def create_recipe(db,name,description,length,difficulty)
-  # your code here
+  db.execute("INSERT INTO Recipes (Name, Description, Length, Difficulty)
+  VALUES ('#{name}','#{description}','#{length}','#{difficulty}')
+  	;")
 end
 
 # function to delete a recipe
 def delete_recipe(db,id)
-  # your code here
+	sql = "DELETE FROM Recipes WHERE Id = '#{id}'"
+	db.execute(sql)
 end
 
 # function to delete all recipes
 def delete_all_recipes(db)
-  # your code here
+ sql = "DELETE FROM Recipes"
+ db.execute(sql)
 end
 
 # function to update a recipe
 def update_recipe(db,id,description)
-  # your code here
+	sql = ("UPDATE Recipe SET description='#{description}'WHERE name='#{id}'")
+	db.execute(sql)
 end
 
+# function to get all recipes
 def get_recipes(db)
-  # function to get all recipes
+  sql = "SELECT * FROM Recipes"
+  db.execute(sql)
 end
 
 
@@ -46,24 +56,49 @@ puts "Salut Robuchon, what do you want to do today?"
 puts "1. create a recipe"
 puts "2. delete all recipes"
 puts "3. read your recipes"
+puts "4. Exit"
 
 choice =  gets.chomp.to_i
 
 if choice == 1
-  # your code here to create a recipe
-  # you need to ask for name, description, length and difficulty
+  puts "name?"
+  name = gets.chomp
+  puts "description?"
+  description = gets.chomp
+  puts "length?"
+  length = gets.chomp.to_i
+  puts "difficulty?"
+  difficulty = gets.chomp.to_i
+
+  create_recipe(db,name,description,length,difficulty)
   
 elsif choice == 2
-  # your code here to delete all recipes
-  
+		puts "delete all recipes (1) or one recipe (2) or update(3)?"
+		choice = gets.chomp.to_i
+  case choice
+  when 1
+    puts "you just deleted all your recipes!"
+    id = gets.chomp.to_i
+    delete_all_recipes(db)
+  when 2
+  	delete_recipe(db,id)
+  	puts "What recipe ?"
+  	id = gets.chomp.to_i
+  when 3
+  	update_recipe(db,id,description)
+
+  end
+elsif choice == 2
+  puts "what recipe?"
+  id = gets.chomp.to_i
+  delete_recipe(db,id)
 elsif choice == 3
-  # your code here to read all recipes
+  puts "Here are all your recipes!!!!!"
+  puts get_recipes(db)
+elsif choice == 3
+	get_recipes(db)
+elsif choice == 4
+	puts "Bye"
+else
+	puts "catch all"
 end 
-  
-  
-  
-  
-  
-  
-  
-  
